@@ -18,19 +18,19 @@ import (
 
 type PowToken struct{
 
-	Key       string;
-	Salt      string;
+	Key       string `json:"key"`;
+	Salt      string `json:"salt"`;
 
-	N int
-	R int
-	P int
-	Length    int;
-	Zeros     int;
+	N int `json:"n"`
+	R int `json:"r"`
+	P int `json:"p"`
+	Length    int `json:"length"`;
+	Zeros     int `json:"zeros"`;
 
-	Timestamp int64;
-	Nonce     string;
+	Timestamp int64 `json:"timestamp"`;
+	Nonce     string `json:"nonce"`;
 
-	Mac       string
+	Mac       string `json:"mac"`
 }
 
 

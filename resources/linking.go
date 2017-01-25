@@ -14,19 +14,23 @@ import (
 	"fmt"
 )
 
+type Vault struct {
+	VaultName string `json:"vaultName"`
+}
+
 type OTP struct{
-	Email string
-	Password string
-	Timestamp int64
-	Nonce string
-	Mac string
-	OTP string
+	Email string `json:"email"`
+	//Password string `json:"password"`
+	Timestamp int64 `json:"timestamp"`
+	Nonce string `json:"nonce"`
+	Mac string `json:"mac"`
+	OTP string `json:"otp"`
 }
 
 func (otp OTP) macText() string{
 	s := strings.Join([]string{
 		otp.Email,
-		otp.Password,
+		//otp.Password,
 		strconv.FormatInt(otp.Timestamp, 10),
 		otp.Nonce,
 	}, "|");
@@ -61,11 +65,11 @@ func (otp OTP) validMac() bool{
 func InitDeviceLinking(c echo.Context) error {
 
 	email := c.Param("email")
-	password := c.QueryParam("password")
+	//password := c.QueryParam("password")
 
 	var otp = new(OTP)
 	otp.Email = email
-	otp.Password = password
+	//otp.Password = password
 	otp.Timestamp = time.Now().UnixNano() / 1000000
 	otp.Nonce = crypto.RandomBase64(16)
 
@@ -98,17 +102,17 @@ func FinishDeviceLinking(c echo.Context) error{
 	}
 
 
-
-
 	storageKey, _:= base64.StdEncoding.DecodeString(config.Get().Storage.StorageKey);
 	mac := hmac.New(sha256.New, storageKey)
 	mac.Write([]byte(otp.Email));
-	mac.Write([]byte("|"))
-	mac.Write([]byte(otp.Password))
+	//mac.Write([]byte("|"))
+	//mac.Write([]byte(otp.Password))
 	macBytes := mac.Sum(nil);
 	vaultName := base64.StdEncoding.EncodeToString(macBytes);
 
 	// todo create vault on disk
 
-	return c.String(http.StatusOK, "Storage vault name: " + vaultName)
+	v := Vault{VaultName:vaultName}
+
+	return c.JSON(http.StatusOK, v)
 }
