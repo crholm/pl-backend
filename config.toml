@@ -1,0 +1,21 @@
+name = "Pl-Backend-Server"
+server_key = "etvC2sgVcF9EPwuEdlTcvl0D2KULnubG764o7HjMdQ8="
+ttl = 1000
+
+[server]
+interface = "localhost"
+port = 4321
+
+[storage]
+storage_key = "etvC2sgVcF9EPwuEdlTcvl0D2KULnubG764o7HjMdQ8="
+base_dir = "/tmp/pl"
+
+[pow]
+ttw = 2000
+zeros = 3
+length = 32
+
+[smtp]
+server = "mail.example.com:25"
+from = "otp@example.com"
+# Auth
