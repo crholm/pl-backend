@@ -12,6 +12,7 @@ import (
 	"github.com/crholm/pl-backend/common/crypto"
 	"strings"
 	"fmt"
+	"os"
 )
 
 type Vault struct {
@@ -62,7 +63,7 @@ func (otp OTP) validMac() bool{
 
 
 
-func InitDeviceLinking(c echo.Context) error {
+func InitClientLinking(c echo.Context) error {
 
 	email := c.Param("email")
 	//password := c.QueryParam("password")
@@ -76,12 +77,13 @@ func InitDeviceLinking(c echo.Context) error {
 	otp.Mac = otp.toMac()
 	expectedOTP := otp.toOTP()
 
+	// TODO smtp send email with OTP
 	fmt.Println("Email OTP: " + expectedOTP)
 
 	return c.JSON(http.StatusOK, otp)
 }
 
-func FinishDeviceLinking(c echo.Context) error{
+func FinishClientLinking(c echo.Context) error{
 
 	otp := new(OTP)
 	if err := c.Bind(otp); err != nil {
@@ -105,12 +107,12 @@ func FinishDeviceLinking(c echo.Context) error{
 	storageKey, _:= base64.StdEncoding.DecodeString(config.Get().Storage.StorageKey);
 	mac := hmac.New(sha256.New, storageKey)
 	mac.Write([]byte(otp.Email));
-	//mac.Write([]byte("|"))
-	//mac.Write([]byte(otp.Password))
 	macBytes := mac.Sum(nil);
 	vaultName := base64.StdEncoding.EncodeToString(macBytes);
 
-	// todo create vault on disk
+	dir := config.Get().Storage.BaseDir + "/" + vaultName[:2] + "/" + vaultName;
+
+	os.MkdirAll(dir, 0777);
 
 	v := Vault{VaultName:vaultName}
 

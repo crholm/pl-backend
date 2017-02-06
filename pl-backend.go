@@ -23,18 +23,18 @@ func main() {
 
 	// SETUP
 	// Create repository and Send OTP to link device
-	e.POST("/:email", resources.InitDeviceLinking)
+	e.POST("/:email", resources.InitClientLinking)
 
 	// Link account with OTP and return Valut key
-	e.POST("/:email/link", resources.FinishDeviceLinking)
+	e.POST("/:email/link", resources.FinishClientLinking)
 
 
 	// WORKING AND SAVING
 	// Get latest vault
-	e.GET("/vaults/:token", resources.Noop)
+	e.GET("/vaults/:token", resources.GetVault)
 
 	// Get save vault
-	e.POST("/vaults/:token", resources.Noop)
+	e.POST("/vaults/:token", resources.SaveVault)
 
 	// List all revisions
 	e.GET("/vaults/:token/revisions", resources.Noop)
